@@ -3,6 +3,7 @@ package com.exemple.ingredientspring.repository;
 import com.exemple.ingredientspring.datasource.DataSource;
 import com.exemple.ingredientspring.entity.CategoryEnum;
 import com.exemple.ingredientspring.entity.Ingredient;
+import com.exemple.ingredientspring.exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class IngredientRepository {
     private DataSource dataSource;
 
-    public Ingredient findById(int id) {
+    public Ingredient findById(int id) throws NotFoundException {
         try (
                 Connection conn = dataSource.getConnection()) {
             PreparedStatement ingredientStatement = conn.prepareStatement("""
@@ -37,7 +38,7 @@ public class IngredientRepository {
                 return ingredient;
             }
 
-            throw new RuntimeException("Ingredient not found: " + id);
+            throw new NotFoundException("Ingredient not found: " + id);
 
 //        PreparedStatement movementStatement = conn.prepareStatement("""
 //                    SELECT id, quantity, unit, type, creation_datetime
@@ -61,8 +62,10 @@ public class IngredientRepository {
 //        }
 //        ingredient.setStockMovementList(stockMovementList);
 
-        } catch (
-                Exception e) {
+        }catch (NotFoundException e){
+            throw e;
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
