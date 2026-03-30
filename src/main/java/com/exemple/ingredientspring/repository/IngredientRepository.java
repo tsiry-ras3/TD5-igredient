@@ -3,14 +3,16 @@ package com.exemple.ingredientspring.repository;
 import com.exemple.ingredientspring.datasource.DataSource;
 import com.exemple.ingredientspring.entity.CategoryEnum;
 import com.exemple.ingredientspring.entity.Ingredient;
+import com.exemple.ingredientspring.entity.StockValue;
+import com.exemple.ingredientspring.entity.UnitEnum;
+import com.exemple.ingredientspring.exception.BadRequestException;
 import com.exemple.ingredientspring.exception.NotFoundException;
+import com.exemple.ingredientspring.validator.IngredientValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class IngredientRepository {
     private DataSource dataSource;
+    private IngredientValidator validator;
 
     public Ingredient findById(int id) throws NotFoundException {
         try (
@@ -94,6 +97,49 @@ public class IngredientRepository {
             throw new RuntimeException(e);
         }
 
+    }
+
+
+    public StockValue getStockAt(int id, Instant at, UnitEnum unit) throws NotFoundException, BadRequestException {
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement checkPs = conn.prepareStatement("""
+                SELECT id FROM ingredient WHERE id = ?
+                """);
+            checkPs.setInt(1, id);
+            ResultSet checkRs = checkPs.executeQuery();
+            if (!checkRs.next()) {
+                throw new NotFoundException("Ingredient.id=" + id + " is not found");
+            }
+
+            PreparedStatement ps = conn.prepareStatement("""
+                SELECT quantity, type
+                FROM stock_movement
+                WHERE id_ingredient = ?
+                AND creation_datetime <= ?
+                ORDER BY creation_datetime ASC
+                """);
+            ps.setInt(1, id);
+            ps.setTimestamp(2, Timestamp.from(at));
+            ResultSet rs = ps.executeQuery();
+
+            double total = 0;
+            while (rs.next()) {
+                double qty = rs.getDouble("quantity");
+                String type = rs.getString("type");
+                if ("IN".equals(type)) {
+                    total += qty;
+                } else {
+                    total -= qty;
+                }
+            }
+
+            return new StockValue(total, unit);
+
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
