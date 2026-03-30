@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @AllArgsConstructor
@@ -26,7 +29,7 @@ public class IngredientRepository {
             ResultSet rs = ingredientStatement.executeQuery();
 
             if (rs.next()) {
-            Ingredient ingredient = new Ingredient();
+                Ingredient ingredient = new Ingredient();
                 ingredient.setId(rs.getInt("id"));
                 ingredient.setName(rs.getString("name"));
                 ingredient.setCategory(CategoryEnum.valueOf(rs.getString("category")));
@@ -64,4 +67,30 @@ public class IngredientRepository {
         }
     }
 
+    public List<Ingredient> findAll() {
+
+        try (
+                Connection conn = dataSource.getConnection()) {
+            PreparedStatement ingredientStatement = conn.prepareStatement("""
+                            SELECT id, name, category, price
+                            FROM ingredient
+                    """);
+            ResultSet rs = ingredientStatement.executeQuery();
+
+            List<Ingredient> ingredients = new ArrayList<>();
+            while (rs.next()) {
+                Ingredient ingredient = new Ingredient();
+                ingredient.setId(rs.getInt("id"));
+                ingredient.setName(rs.getString("name"));
+                ingredient.setCategory(CategoryEnum.valueOf(rs.getString("category")));
+                ingredient.setPrice(rs.getDouble("price"));
+                ingredients.add(ingredient);
+            }
+            return ingredients;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
+

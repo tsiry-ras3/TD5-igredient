@@ -18,8 +18,7 @@ public class IngredientController {
     @GetMapping("/ingredients")
     public ResponseEntity<?> getIngredients() {
         try {
-
-            return ResponseEntity.status(HttpStatus.OK).body("Not implemented yet");
+            return ResponseEntity.status(HttpStatus.OK).body(ingredientRepository.findAll());
         } catch (Exception e) {
 //            throw new RuntimeException(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
