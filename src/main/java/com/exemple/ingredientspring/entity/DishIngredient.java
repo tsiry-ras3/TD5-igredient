@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 
 public class DishIngredient {
-    private int id;
+    private Integer id;
     @JsonIgnore
     private Dish dish;
     private Ingredient ingredient;

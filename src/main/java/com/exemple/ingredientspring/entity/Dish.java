@@ -13,8 +13,8 @@ import java.util.List;
 @Setter
 public class Dish {
     private Integer id;
-    private Double price;
     private String name;
+    private Double price;
     private DishTypeEnum dishType;
     private List<DishIngredient> ingredients;
 }
