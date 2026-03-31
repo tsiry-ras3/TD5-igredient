@@ -24,7 +24,7 @@ public class DishIngredientController {
     private DishIngredientValidator validator;
 
     @PutMapping("/dishes/{id}/ingredients")
-    public ResponseEntity<?> addIngredient(@PathVariable Integer id, @RequestBody (required = false) List<DishIngredient> ingredients) throws NotFoundException {
+    public ResponseEntity<?> addIngredient(@PathVariable Integer id, @RequestBody(required = false) List<DishIngredient> ingredients) throws NotFoundException {
         try {
             dishRepository.findDishById(id);
             validator.bodyValidator(ingredients);
@@ -35,6 +35,22 @@ public class DishIngredientController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/dishes/{id}/ingredients")
+    public ResponseEntity<?> getDishIngredients(
+            @PathVariable Integer id,
+            @RequestParam(name = "ingredientName", required = false) String ingredientName,
+            @RequestParam(name = "ingredientPriceAround", required = false) Double ingredientPriceAround
+    ) {
+        try {
+            List<DishIngredient> ingredients = dishIngredientRepository.findIngredientsByDishId(id, ingredientName, ingredientPriceAround);
+            return ResponseEntity.ok(ingredients);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

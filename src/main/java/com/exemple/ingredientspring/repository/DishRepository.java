@@ -15,8 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class DishRepository {
     private DataSource dataSource;
-    private GenerateId generateId;
-    private DishIngredientRepository dishIngredientRepository;
+//    private GenerateId generateId;
+//    private DishIngredientRepository dishIngredientRepository;
 
     public List<Dish> findAll() {
         List<Dish> dishes = new ArrayList<>();
