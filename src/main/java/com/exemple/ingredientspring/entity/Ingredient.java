@@ -1,9 +1,12 @@
 package com.exemple.ingredientspring.entity;
 
+import com.exemple.ingredientspring.repository.StockMovement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,4 +17,5 @@ public class Ingredient {
     private String name;
     private CategoryEnum category;
     private Double price;
+    private List<StockMovement> stockMovements;
 }

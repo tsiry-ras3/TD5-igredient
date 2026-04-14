@@ -6,7 +6,6 @@ import com.exemple.ingredientspring.entity.DishIngredient;
 import com.exemple.ingredientspring.entity.Ingredient;
 import com.exemple.ingredientspring.entity.UnitEnum;
 import com.exemple.ingredientspring.exception.NotFoundException;
-import com.exemple.ingredientspring.service.GenerateId;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 @Repository
 public class DishIngredientRepository {
-//    private GenerateId generateId;
     private DataSource dataSource;
     private DishRepository dishRepository;
     public void detachAndAttachIngredients(Connection conn, Integer dishId, List<DishIngredient> ingredients) throws SQLException {

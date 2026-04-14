@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DishController {
 
-    private final DishRepository dishRepository;
+private final DishRepository dishRepository;
 
     @GetMapping("/dishes")
     public ResponseEntity<?> getDishes() {
