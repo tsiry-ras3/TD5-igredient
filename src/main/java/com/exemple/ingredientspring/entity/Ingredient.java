@@ -1,5 +1,6 @@
 package com.exemple.ingredientspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,11 @@ public class Ingredient {
     private CategoryEnum category;
     private Double price;
     private List<StockMovement> stockMovements;
+
+    public Ingredient(Integer id, String name, CategoryEnum category, Double price) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.price = price;
+    }
 }

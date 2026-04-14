@@ -22,7 +22,7 @@ components:
       type: object
       properties:
         id:
-          type: int
+          type: integer
           example: 1
         name:
           type: string
@@ -31,25 +31,23 @@ components:
           type: string
           enum: [ VEGETABLE, ANIMAL, MARINE, DAIRY, OTHER ]
         price:
-          type: double
+          type: number
           example: 300.0
         stockMovement:
-          type: object
-          allOf:
-            - $ref: "#/components/schemas/stockMovement"
+          type: array
+          items:
+            $ref: "#/components/schemas/stockMovement"
     stockMovement:
       type: object
       properties:
         id:
-          type: int
+          type: integer
           example: 1
         stockValue:
-          type: object
-          allOf:
-            - $ref: "#/components/schemas/stockValue"
+          $ref: "#/components/schemas/stockValue"
         movement_type:
           type: string
-          enum: [in,out]
+          enum: [ in,out ]
         creation_datetime:
           type: string
           format: date
@@ -57,11 +55,11 @@ components:
       type: object
       properties:
         quantity:
-          type: double
+          type: number
           example: 1.4
         unit:
           type: string
-          enum: [PCS, KG, L]
+          enum: [ PCS, KG, L ]
 
 
 
@@ -79,6 +77,14 @@ paths:
   /ingredients/{id}:
     get:
       description: find ingredient by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+
       responses:
         '200':
           description: find ingredient by id
@@ -87,7 +93,50 @@ paths:
               schema:
                 $ref: "#/components/schemas/ingredient"
         '404':
-          $ref : "#/components/responses/ingredientNotFound"
+          $ref: "#/components/responses/ingredientNotFound"
+
+
+  /ingredients/{id}/stock:
+    get:
+      description: get stock of ingredient at a specific date
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+
+        - name: at
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+
+        - name: unit
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ PCS, KG, L ]
+      responses:
+        '200':
+          description: return quantity and unity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stockValue"
+        '404':
+          $ref: "#/components/responses/ingredientNotFound"
+        '400':
+          description: bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Either mandatory query parameter `at` or `unit` is not provided."
+
 
 
 
