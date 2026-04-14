@@ -61,6 +61,24 @@ components:
           type: string
           enum: [ PCS, KG, L ]
 
+    dishes:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: gateau
+        price:
+          type: number
+          example: 300.0
+        dishType:
+          type: string
+          enum: [ STARTER, MAIN, DESSERT ]
+        ingredients:
+          $ref: "#/components/schemas/ingredient"
+
 
 
 paths:
@@ -136,6 +154,65 @@ paths:
               schema:
                 type: string
                 example: "Either mandatory query parameter `at` or `unit` is not provided."
+
+  /dishes:
+    get:
+      responses:
+        '200':
+          description: return all dishes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dishes"
+
+  /dishes/{id}/ingredients:
+    put:
+      description:  Associate or dissociate ingredient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ingredient"
+
+      responses:
+        '200':
+          description: updated list of ingredients associated to the dish
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/dishes"
+        '404':
+          description: dish not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Dish.id=1 is not found"
+        '400':
+          description: bad request — request body is missing
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Request body is required and must contain a list of ingredients."
+
+
+
+
+
 
 
 
