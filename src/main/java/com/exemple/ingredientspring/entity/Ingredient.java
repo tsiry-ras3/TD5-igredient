@@ -1,6 +1,5 @@
 package com.exemple.ingredientspring.entity;
 
-import com.exemple.ingredientspring.repository.StockMovement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

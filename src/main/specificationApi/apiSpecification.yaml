@@ -5,20 +5,18 @@ info:
   version: 1.0.0
 servers:
   - url: 'https://localhost:8080'
-paths:
-  /ingredients:
-    get:
-      description: return all ingredient
-      responses:
-        '200':
-          description: a list of ingredient
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ingredient"
 
-#            application/json:
+
 components:
+  responses:
+    ingredientNotFound:
+      description: ingredient not found.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: "Ingredient.id=1 is not found"
+
   schemas:
     ingredient:
       type: object
@@ -67,9 +65,31 @@ components:
 
 
 
+paths:
+  /ingredients:
+    get:
+      description: return all ingredient
+      responses:
+        '200':
+          description: a list of ingredient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ingredient"
+  /ingredients/{id}:
+    get:
+      description: find ingredient by id
+      responses:
+        '200':
+          description: find ingredient by id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ingredient"
+        '404':
+          $ref : "#/components/responses/ingredientNotFound"
 
 
 
 
 
-  
